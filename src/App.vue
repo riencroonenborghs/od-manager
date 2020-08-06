@@ -1,32 +1,66 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
+    <md-toolbar>
+      <flex-row align-h="between" align-v="center" id="title">
+        <flex-row align-v="center">
+          <md-button class="md-icon-button" @click="showSettings = true" title="Settings">
+            <md-icon>more_vert</md-icon>
+          </md-button>
+          <h3 class="md-title">OD Manager</h3>
+        </flex-row>
+        <div>
+          <md-icon v-if="!authenticated">lock</md-icon>
+          <md-button v-if="authenticated" class="md-icon-button" @click="reload()" title="Reload downloads">
+            <md-icon>autorenew</md-icon>
+          </md-button>
+          <md-button v-if="authenticated" class="md-icon-button" @click="logOut()" title="Log out">
+            <md-icon>lock_open</md-icon>
+          </md-button>
+        </div>
+      </flex-row>
+    </md-toolbar>
+
+    <router-view></router-view>
+
+    <Message></Message>
+    <SettingsDialog :show="showSettings" v-on:closeDialog="showSettings = false"></SettingsDialog>
   </div>
 </template>
 
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script>
+import Message from '@/components/Message'
+import SettingsDialog from '@/components/SettingsDialog'
+import { mapState } from 'vuex'
 
-#nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
+export default {
+  name: 'App',
+  data: () => ({
+    showSettings: false
+  }),
+  components: {
+    Message, SettingsDialog
+  },
+  computed: mapState({
+    authenticated: function (state) {
+      return state.authenticated
+    }
+  }),
+  methods: {
+    logOut: function () {
+      if (!this.$store.state.authService.authenticated) return
+      this.$store.state.authService.logOut()
+      this.$router.push({ name: 'auth' })
+    },
+    reload: function () {
+      this.$store.dispatch('successMessage', 'you\'re in')
+      this.$store.dispatch('loadDownloads')
     }
   }
+}
+</script>
+
+<style lang="scss">
+.md-toolbar #title {
+  width: 100%;
 }
 </style>
