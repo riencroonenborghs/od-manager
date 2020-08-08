@@ -3,8 +3,8 @@
     <md-empty-state v-if="downloads.length == 0"
       class="md-primary"
       :md-icon="icon"
-      :md-label="fullLabel"
-      :md-description="description">
+      :md-label="emptyStateFullLabel"
+      :md-description="emptyStateDescription">
     </md-empty-state>
     <md-list v-if="downloads.length > 0">
       <md-list-item md-expand v-for="download in downloads" :key="download.id">
@@ -52,10 +52,10 @@ export default {
   name: 'DownloadsList',
   props: ['downloads', 'type', 'icon'],
   computed: {
-    fullLabel: function () {
+    emptyStateFullLabel: function () {
       return `Nothing in ${this.type}`
     },
-    description: function () {
+    emptyStateDescription: function () {
       return `All your ${this.type} downloads will appear here.`
     }
   },

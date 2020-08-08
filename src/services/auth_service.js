@@ -3,10 +3,6 @@ import store from '@/store'
 export class AuthService {
   constructor (http) {
     this.http = http
-
-    // this.PROTOCOL = 'http'
-    // this.HOST = 'mother'
-    // this.PORT = 80
     this.LOG_IN_URL = '/users/sign_in'
     this.JWT_KEY = 'od-manager-jwt'
   }
@@ -22,7 +18,6 @@ export class AuthService {
       this.http.post(this._buildUrl(this.LOG_IN_URL), data).then(
         (success) => {
           this._store(success.body)
-          store.dispatch('successMessage', 'you\'re in')
           resolve(true)
         },
         (error) => {
@@ -69,7 +64,7 @@ export class AuthService {
         this.JWT_KEY
       )
     )
-    return jwt.token
+    return jwt?.token
   }
 
   _buildUrl (path) {

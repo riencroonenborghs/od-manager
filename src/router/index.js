@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import store from '@/store'
 
 import Downloads from '@/views/Downloads.vue'
+import AddNewDownload from '@/views/AddNewDownload.vue'
 import Auth from '@/views/Auth.vue'
 
 Vue.use(VueRouter)
@@ -14,7 +15,16 @@ const routes = [
   },
   {
     path: '/downloads',
+    name: 'downloads',
     redirect: '/downloads/queued'
+  },
+  {
+    path: '/downloads/new',
+    name: 'new-download',
+    component: AddNewDownload,
+    meta: {
+      requiresAuth: true
+    }
   },
   {
     path: '/downloads/:status',

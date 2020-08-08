@@ -4,17 +4,12 @@ import { Download } from '@/models/download'
 export class DownloadsService {
   constructor (http) {
     this.http = http
-
-    this.PROTOCOL = 'http'
-    this.HOST = 'mother'
-    this.PORT = 80
     this.ALL_URL = '/api/v1/downloads.json'
+    this.POST_URL = '/api/v1/downloads.json'
   }
 
   all () {
     return new Promise((resolve, reject) => {
-      const token = store.state.authService.token
-      this.http.headers.common.Authorization = token
       this.http.get(this._buildUrl(this.ALL_URL)).then(
         (data) => {
           const downloads = data.body.map(
@@ -30,8 +25,20 @@ export class DownloadsService {
     })
   }
 
+  save (download) {
+    return new Promise((resolve, reject) => {
+      const options = { emulateJSON: true }
+      const data = { download: download.asJSON }
+      this.http.post(this._buildUrl(this.POST_URL), data, options).then(
+        (data) => {
+          resolve(true)
+        }
+      )
+    })
+  }
+
   _buildUrl (path) {
-    return `${this.PROTOCOL}://${this.HOST}:${this.PORT}${path}`
+    return `${store.state.settings.protocol}://${store.state.settings.hostname}:${store.state.settings.port}${path}`
   }
 
   _toDownloadData (item) {

@@ -26,11 +26,9 @@ export default new Vuex.Store({
   },
   mutations: {
     message (state, message) {
-      console.log(`message -- ${message}`)
       state.message.message = message
     },
     messageType (state, messageType) {
-      console.log(`messageType -- ${messageType}`)
       state.message.type = messageType
     },
     authenticated (state, bool) {
@@ -51,7 +49,6 @@ export default new Vuex.Store({
       context.state.settingsService.save()
     },
     successMessage (context, message) {
-      console.log(`successMessage == ${message}`)
       context.commit('messageType', 'success')
       context.commit('message', message)
     },

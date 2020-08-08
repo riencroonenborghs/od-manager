@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueFlex from 'vue-flex'
 import 'vue-flex/dist/vue-flex.css'
-import { MdToolbar, MdButton, MdIcon, MdField, MdSnackbar, MdTabs, MdList, MdBadge, MdEmptyState, MdDialog, MdMenu } from 'vue-material/dist/components'
+import { MdToolbar, MdButton, MdIcon, MdField, MdSnackbar, MdTabs, MdList, MdBadge, MdEmptyState, MdDialog, MdMenu, MdCheckbox } from 'vue-material/dist/components'
 import 'vue-material/dist/vue-material.min.css'
 import 'vue-material/dist/theme/default-dark.css'
 
@@ -21,7 +21,19 @@ Vue.use(MdBadge)
 Vue.use(MdEmptyState)
 Vue.use(MdDialog)
 Vue.use(MdMenu)
+Vue.use(MdCheckbox)
 Vue.config.productionTip = false
+
+Vue.http.interceptors.push(function (request) {
+  if (store?.state?.authService?.token) {
+    request.headers.set('Authorization', store.state.authService.token)
+  }
+  // return function (response) {
+  //   if (response.status === 401) {
+  //     store.state.authenticated = false
+  //   }
+  // }
+})
 
 new Vue({
   router,

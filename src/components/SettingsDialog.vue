@@ -1,27 +1,40 @@
 <template>
-  <md-dialog :md-active.sync="show">
+  <md-dialog :md-active.sync="show" :md-close-on-esc="false" :md-click-outside-to-close="false">
     <md-dialog-title>
-      Settings
+      <flex-row align-h="between" align-v="center">
+        <span>Settings</span>
+        <md-button class="md-icon-button" @click="close()">
+          <md-icon>close</md-icon>
+        </md-button>
+      </flex-row>
     </md-dialog-title>
 
     <form novalidate>
-      <md-field>
-        <label>Protocol</label>
-        <md-select v-model="protocol">
-          <md-option value="http">HTTP</md-option>
-          <md-option value="https">HTTPS</md-option>
-        </md-select>
-      </md-field>
+      <flex-row>
+        <div id="protocol">
+          <md-field>
+            <label for="protocol">Protocol</label>
+            <md-select v-model="protocol" name="protocol">
+              <md-option value="http">http://</md-option>
+              <md-option value="https">https://</md-option>
+            </md-select>
+          </md-field>
+        </div>
 
-      <md-field>
-        <label>Hostname</label>
-        <md-input v-model="hostname"></md-input>
-      </md-field>
+        <div id="hostname">
+          <md-field>
+            <label for="hostname">Hostname</label>
+            <md-input v-model="hostname" name="hostname"></md-input>
+          </md-field>
+        </div>
 
-      <md-field>
-        <label>Port</label>
-        <md-input v-model="port" type="number"></md-input>
-      </md-field>
+        <div id="port">
+          <md-field>
+            <label for="port">Port</label>
+            <md-input v-model="port" type="number" name="port"></md-input>
+          </md-field>
+        </div>
+      </flex-row>
     </form>
 
     <md-dialog-actions>
@@ -77,4 +90,8 @@ export default {
 
 <style scoped lang="scss">
 form { padding: 16px; }
+#protocol { width: 100px; }
+#port input { width: 60px; }
+#hostname { width: 250px; }
+#protocol, #hostname { padding-right: 4px; }
 </style>

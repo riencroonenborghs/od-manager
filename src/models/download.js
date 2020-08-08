@@ -63,4 +63,16 @@ export class Download {
     if (str == null) return null
     return new Date(str)
   }
+
+  get asJSON () {
+    const data = { url: this.url }
+    if (this.httpUsername) { data.httpUsername = this.httpUsername }
+    if (this.httpPassword) { data.httpPassword = this.httpPassword }
+    if (this.audioOnly) { data.audioOnly = this.audioOnly }
+    if (this.audioFormat) { data.audioFormat = this.audioFormat }
+    if (this.downloadSubs) { data.downloadSubs = this.downloadSubs }
+    if (this.srtSubs) { data.srtSubs = this.srtSubs }
+    if (this.fileFilter) { data.fileFilter = this.fileFilter }
+    return JSON.stringify(data)
+  }
 }

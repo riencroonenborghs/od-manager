@@ -10,12 +10,20 @@
         </flex-row>
         <div>
           <md-icon v-if="!authenticated">lock</md-icon>
-          <md-button v-if="authenticated" class="md-icon-button" @click="reload()" title="Reload downloads">
-            <md-icon>autorenew</md-icon>
-          </md-button>
-          <md-button v-if="authenticated" class="md-icon-button" @click="logOut()" title="Log out">
-            <md-icon>lock_open</md-icon>
-          </md-button>
+          <div v-if="authenticated">
+            <md-button class="md-icon-button" to="/downloads/new" exact-active-class="active-view" title="Add new download">
+              <md-icon>add</md-icon>
+            </md-button>
+            <md-button class="md-icon-button" to="/downloads" title="Back to downloads">
+              <md-icon>list</md-icon>
+            </md-button>
+            <md-button class="md-icon-button" @click="reload()" title="Reload downloads">
+              <md-icon>autorenew</md-icon>
+            </md-button>
+            <md-button class="md-icon-button" @click="logOut()" title="Log out">
+              <md-icon>lock_open</md-icon>
+            </md-button>
+          </div>
         </div>
       </flex-row>
     </md-toolbar>
@@ -52,8 +60,14 @@ export default {
       this.$router.push({ name: 'auth' })
     },
     reload: function () {
-      this.$store.dispatch('successMessage', 'you\'re in')
+      this.$store.dispatch('successMessage', 'reloading list ...')
       this.$store.dispatch('loadDownloads')
+    },
+    add: function () {
+      this.$router.push({ name: 'new-download' })
+    },
+    downloads: function () {
+      this.$router.push({ name: 'downloads' })
     }
   }
 }
@@ -62,5 +76,8 @@ export default {
 <style lang="scss">
 .md-toolbar #title {
   width: 100%;
+}
+.active-view {
+  display: none;
 }
 </style>

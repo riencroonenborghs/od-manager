@@ -35,7 +35,10 @@ export default {
     },
     logIn: function () {
       this.$store.state.authService.logIn(this.email, this.password).then(
-        (success) => this.$router.push({ path: '/' })
+        (success) => {
+          this.$store.dispatch('successMessage', 'welcome back')
+          this.$router.push({ path: '/' })
+        }
       )
     }
   }
