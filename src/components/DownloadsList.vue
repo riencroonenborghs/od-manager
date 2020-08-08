@@ -29,12 +29,15 @@
               <md-list-item class="md-inset" v-if="download.cancelledAt">
                 Cancelled on {{download.cancelledAt | date}}
               </md-list-item>
+              <md-list-item class="md-inset" v-if="errorType">
+                <div class="error">{{download.error}}</div>
+              </md-list-item>
             </flex-col>
             <div>
-              <md-button class="md-icon-button md-accent">
+              <md-button v-if="!startedType" class="md-icon-button md-accent" @click="remove(download)">
                 <md-icon>delete_outline</md-icon>
               </md-button>
-              <md-button class="md-icon-button md-primary">
+              <md-button v-if="finishedType || errorType || cancelledType" class="md-icon-button md-primary" @click="queue(download)">
                 <md-icon>add_to_queue</md-icon>
               </md-button>
             </div>
@@ -57,15 +60,39 @@ export default {
     },
     emptyStateDescription: function () {
       return `All your ${this.type} downloads will appear here.`
-    }
+    },
+    queuedType: function () { return this.type === 'queued' },
+    startedType: function () { return this.type === 'started' },
+    finishedType: function () { return this.type === 'finished' },
+    errorType: function () { return this.type === 'error' },
+    cancelledType: function () { return this.type === 'cancelled' }
   },
   filters: {
     date: function (value) {
       return DayJS(value).format('dddd D MMMM YYYY [at] HH:mm:s')
+    }
+  },
+  methods: {
+    remove: function (download) {
+      this.$store.state.downloadsService.remove(download).then(
+        (data) => {
+          this.$store.dispatch('successMessage', 'download removed')
+          this.$store.dispatch('loadDownloads')
+        }
+      )
+    },
+    queue: function (download) {
+      this.$store.state.downloadsService.queue(download).then(
+        (data) => {
+          this.$store.dispatch('successMessage', 'download queued')
+          this.$store.dispatch('loadDownloads')
+        }
+      )
     }
   }
 }
 </script>
 
 <style scoped lang="scss">
+.error { background: #efaeae; color: #8c2020; padding: 8px 16px; }
 </style>

@@ -4,8 +4,10 @@ import { Download } from '@/models/download'
 export class DownloadsService {
   constructor (http) {
     this.http = http
-    this.ALL_URL = '/api/v1/downloads.json'
-    this.POST_URL = '/api/v1/downloads.json'
+    this.ALL_URL = '/api/v1/downloads'
+    this.POST_URL = '/api/v1/downloads'
+    this.QUEUE_URL = '/api/v1/downloads/:id/queue'
+    this.DELETE_URL = '/api/v1/downloads/:id'
   }
 
   all () {
@@ -27,9 +29,8 @@ export class DownloadsService {
 
   save (download) {
     return new Promise((resolve, reject) => {
-      const options = { emulateJSON: true }
       const data = { download: download.asJSON }
-      this.http.post(this._buildUrl(this.POST_URL), data, options).then(
+      this.http.post(this._buildUrl(this.POST_URL), data).then(
         (data) => {
           resolve(true)
         }
@@ -37,8 +38,32 @@ export class DownloadsService {
     })
   }
 
-  _buildUrl (path) {
-    return `${store.state.settings.protocol}://${store.state.settings.hostname}:${store.state.settings.port}${path}`
+  queue (download) {
+    return new Promise((resolve, reject) => {
+      const url = this._buildUrl(this.QUEUE_URL, download)
+      this.http.put(url).then(
+        (data) => {
+          resolve(true)
+        }
+      )
+    })
+  }
+
+  remove (download) {
+    return new Promise((resolve, reject) => {
+      const url = this._buildUrl(this.DELETE_URL, download)
+      this.http.delete(url).then(
+        (data) => {
+          resolve(true)
+        }
+      )
+    })
+  }
+
+  _buildUrl (path, download = null) {
+    let url = `${store.state.settings.protocol}://${store.state.settings.hostname}:${store.state.settings.port}${path}`
+    if (download) { url = url.replace(':id', download.id) }
+    return url
   }
 
   _toDownloadData (item) {

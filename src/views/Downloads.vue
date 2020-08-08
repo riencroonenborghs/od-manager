@@ -42,7 +42,7 @@
               :md-template-data="{ icon: 'priority_high', badge: failedDownloads.length }"
               to="/downloads/failed" exact>
         <DownloadsList  :downloads="failedDownloads"
-                        :type="'failed'"
+                        :type="'error'"
                         :icon="'priority_high'">></DownloadsList>
       </md-tab>
       <md-tab id="tab-cancelled"
@@ -84,7 +84,7 @@ export default {
     },
     failedDownloads: function () {
       return this.$store.state.downloads.filter(function (download) {
-        return download.status === 'failed'
+        return download.status === 'error'
       })
     },
     cancelledDownloads: function () {
