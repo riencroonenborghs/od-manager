@@ -6,7 +6,7 @@
       :md-label="emptyStateFullLabel"
       :md-description="emptyStateDescription">
     </md-empty-state>
-    <md-list v-if="downloads.length > 0">
+    <md-list v-if="downloads.length > 0" class="download-list">
       <md-list-item md-expand v-for="download in downloads" :key="download.id">
         <md-icon>{{icon}}</md-icon>
         <span class="md-list-item-text">{{download.url}}</span>
@@ -34,10 +34,13 @@
               </md-list-item>
             </flex-col>
             <div>
-              <md-button v-if="!startedType" class="md-icon-button md-accent" @click="remove(download)">
+              <md-button v-if="!startedType" class="md-icon-button md-accent" @click="remove(download)" title="Remove download">
                 <md-icon>delete_outline</md-icon>
               </md-button>
-              <md-button v-if="finishedType || errorType || cancelledType" class="md-icon-button md-primary" @click="queue(download)">
+              <md-button v-if="queuedType" class="md-icon-button md-primary" @click="cancel(download)" title="Cancel download">
+                <md-icon>close</md-icon>
+              </md-button>
+              <md-button v-if="finishedType || errorType || cancelledType" class="md-icon-button md-primary" @click="queue(download)" title="Queue download again">
                 <md-icon>add_to_queue</md-icon>
               </md-button>
             </div>
@@ -88,6 +91,14 @@ export default {
           this.$store.dispatch('loadDownloads')
         }
       )
+    },
+    cancel: function (download) {
+      this.$store.state.downloadsService.cancel(download).then(
+        (data) => {
+          this.$store.dispatch('successMessage', 'download cancelled')
+          this.$store.dispatch('loadDownloads')
+        }
+      )
     }
   }
 }
@@ -95,4 +106,9 @@ export default {
 
 <style scoped lang="scss">
 .error { background: #efaeae; color: #8c2020; padding: 8px 16px; }
+// 64 = toolbar, 48 tabs, 16 padding
+.md-list.download-list {
+  height: calc(100vh - 64px - 48px - 16px);
+  overflow: auto;
+}
 </style>

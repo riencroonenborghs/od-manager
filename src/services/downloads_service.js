@@ -7,6 +7,7 @@ export class DownloadsService {
     this.ALL_URL = '/api/v1/downloads'
     this.POST_URL = '/api/v1/downloads'
     this.QUEUE_URL = '/api/v1/downloads/:id/queue'
+    this.CANCEL_URL = '/api/v1/downloads/:id/cancel'
     this.DELETE_URL = '/api/v1/downloads/:id'
   }
 
@@ -41,6 +42,17 @@ export class DownloadsService {
   queue (download) {
     return new Promise((resolve, reject) => {
       const url = this._buildUrl(this.QUEUE_URL, download)
+      this.http.put(url).then(
+        (data) => {
+          resolve(true)
+        }
+      )
+    })
+  }
+
+  cancel (download) {
+    return new Promise((resolve, reject) => {
+      const url = this._buildUrl(this.CANCEL_URL, download)
       this.http.put(url).then(
         (data) => {
           resolve(true)

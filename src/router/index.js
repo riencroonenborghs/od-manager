@@ -13,6 +13,11 @@ const routes = [
     path: '/',
     redirect: '/downloads/queued'
   },
+  // extension specific
+  {
+    path: '/index.html',
+    redirect: '/downloads/queued'
+  },
   {
     path: '/downloads',
     name: 'downloads',

@@ -74,6 +74,15 @@ export default {
 </script>
 
 <style lang="scss">
+html {
+  background: var(--md-theme-default-background, #424242);
+}
+// extension size
+body {
+  width: 800px;
+  height: 600px;
+  background: var(--md-theme-default-background, #424242);
+}
 .md-toolbar #title {
   width: 100%;
 }
