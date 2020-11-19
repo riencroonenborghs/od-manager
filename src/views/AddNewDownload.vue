@@ -6,6 +6,9 @@
           <md-field>
             <label>URL</label>
             <md-input v-model="url" type="url" :change="checkUrl()"></md-input>
+            <md-icon md-src="/assets/images/youtube.svg" v-if="isYoutube" />
+            <md-icon md-src="/assets/images/utorrent.svg" v-if="isTorrent" />
+            <md-icon v-if="isLink">link</md-icon>
           </md-field>
         </div>
 
@@ -154,6 +157,17 @@ export default {
           this.$router.push({ name: 'downloads' })
         }
       )
+    }
+  },
+  computed: {
+    isYoutube: function () {
+      return this.url.match(/youtu/) != null
+    },
+    isTorrent: function () {
+      return this.url.match(/^magnet/) != null
+    },
+    isLink: function () {
+      return this.url !== '' && !this.isYoutube && !this.isTorrent
     }
   }
 }

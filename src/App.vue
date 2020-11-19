@@ -28,6 +28,8 @@
       </flex-row>
     </md-toolbar>
 
+    <md-progress-bar md-mode="query" v-if="fetchingDownloads"></md-progress-bar>
+
     <router-view></router-view>
 
     <Message></Message>
@@ -51,6 +53,9 @@ export default {
   computed: mapState({
     authenticated: function (state) {
       return state.authenticated
+    },
+    fetchingDownloads: function (state) {
+      return state.fetchingDownloads
     }
   }),
   methods: {

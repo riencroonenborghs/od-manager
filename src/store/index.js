@@ -5,6 +5,7 @@ import Vuex from 'vuex'
 import { AuthService } from '@/services/auth_service'
 import { DownloadsService } from '@/services/downloads_service'
 import { SettingsService } from '@/services/settings_service'
+import router from '@/router'
 
 Vue.use(VueResource)
 Vue.use(VueLocalStorage)
@@ -22,6 +23,7 @@ export default new Vuex.Store({
       message: null,
       type: 'success'
     },
+    fetchingDownloads: false,
     downloads: []
   },
   mutations: {
@@ -39,6 +41,9 @@ export default new Vuex.Store({
     },
     settings (state, settings) {
       state.settings = settings
+    },
+    fetchingDownloads (state, fetchingDownloads) {
+      state.fetchingDownloads = fetchingDownloads
     }
   },
   actions: {
@@ -57,9 +62,20 @@ export default new Vuex.Store({
       context.commit('message', message)
     },
     loadDownloads (context) {
+      context.commit('fetchingDownloads', true)
       context.state.downloadsService.all().then(
         (data) => {
+          context.commit('fetchingDownloads', false)
           context.commit('downloads', data)
+        }
+      ).catch(
+        (error) => {
+          context.commit('fetchingDownloads', false)
+          if (error.status === 401) {
+            context.dispatch('errorMessage', 'not authenticated')
+            context.state.authService.logOut()
+            router.push({ name: 'auth' })
+          }
         }
       )
     }

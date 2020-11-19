@@ -59,6 +59,7 @@
 
 <script>
 import DownloadsList from '@/components/DownloadsList'
+import { mapState } from 'vuex'
 
 export default {
   name: 'Downloads',
@@ -68,30 +69,50 @@ export default {
   },
   computed: {
     queuedDownloads: function () {
-      return this.$store.state.downloads.filter(function (download) {
+      return this.downloads.filter(function (download) {
         return download.status === 'queued'
+      }).sort((firstElement, secondElement) => {
+        if (firstElement.queuedAt === secondElement.queuedAt) return 0
+        return firstElement.queuedAt < secondElement.queuedAt ? -1 : 1
       })
     },
     startedDownloads: function () {
-      return this.$store.state.downloads.filter(function (download) {
+      return this.downloads.filter(function (download) {
         return download.status === 'started'
+      }).sort((firstElement, secondElement) => {
+        if (firstElement.startedAt === secondElement.startedAt) return 0
+        return firstElement.startedAt < secondElement.startedAt ? -1 : 1
       })
     },
     finishedDownloads: function () {
-      return this.$store.state.downloads.filter(function (download) {
+      return this.downloads.filter(function (download) {
         return download.status === 'finished'
+      }).sort((firstElement, secondElement) => {
+        if (firstElement.finishedAt === secondElement.finishedAt) return 0
+        return firstElement.finishedAt < secondElement.finishedAt ? -1 : 1
       })
     },
     failedDownloads: function () {
-      return this.$store.state.downloads.filter(function (download) {
+      return this.downloads.filter(function (download) {
         return download.status === 'error'
+      }).sort((firstElement, secondElement) => {
+        if (firstElement.finishedAt === secondElement.finishedAt) return 0
+        return firstElement.finishedAt < secondElement.finishedAt ? -1 : 1
       })
     },
     cancelledDownloads: function () {
-      return this.$store.state.downloads.filter(function (download) {
+      return this.downloads.filter(function (download) {
         return download.status === 'cancelled'
+      }).sort((firstElement, secondElement) => {
+        if (firstElement.cancelledAt === secondElement.cancelledAt) return 0
+        return firstElement.cancelledAt < secondElement.cancelledAt ? -1 : 1
       })
-    }
+    },
+    ...mapState({
+      downloads: function (state) {
+        return state.downloads || []
+      }
+    })
   }
 }
 </script>

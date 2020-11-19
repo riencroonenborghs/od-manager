@@ -23,8 +23,15 @@ export class AuthService {
         (error) => {
           console.error('ERROR')
           console.error(error)
-          store.dispatch('errorMessage', error.body.error)
-          reject(new Error(error.body.error))
+          if (error.body) {
+            const errorMessage = error.body.error
+            store.dispatch('errorMessage', errorMessage)
+            reject(new Error(errorMessage))
+          } else {
+            const errorMessage = 'something\'s gone wrong'
+            store.dispatch('errorMessage', errorMessage)
+            reject(new Error(errorMessage))
+          }
         }
       )
     })

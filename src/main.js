@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueFlex from 'vue-flex'
 import 'vue-flex/dist/vue-flex.css'
-import { MdToolbar, MdButton, MdIcon, MdField, MdSnackbar, MdTabs, MdList, MdBadge, MdEmptyState, MdDialog, MdMenu, MdCheckbox } from 'vue-material/dist/components'
+import { MdToolbar, MdButton, MdIcon, MdField, MdSnackbar, MdTabs, MdList, MdBadge, MdEmptyState, MdDialog, MdMenu, MdCheckbox, MdProgress } from 'vue-material/dist/components'
 import 'vue-material/dist/vue-material.min.css'
 import 'vue-material/dist/theme/default-dark.css'
 
@@ -22,6 +22,7 @@ Vue.use(MdEmptyState)
 Vue.use(MdDialog)
 Vue.use(MdMenu)
 Vue.use(MdCheckbox)
+Vue.use(MdProgress)
 Vue.config.productionTip = false
 
 Vue.http.interceptors.push(function (request) {
