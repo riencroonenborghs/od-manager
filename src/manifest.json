@@ -1,0 +1,33 @@
+{
+  "manifest_version": 2,
+  "version": "6.0",
+  "name": "__MSG_extName__",
+  "homepage_url": "http://localhost:8080/",
+  "description": "OD Manager",
+  "default_locale": "en",
+  "permissions": [
+    "activeTab",
+    "storage",
+    "http://*/",
+    "contextMenus"
+  ],
+  "icons": {
+    "16": "assets/images/app.png",
+    "48": "assets/images/app.png",
+    "128": "assets/images/app.png"
+  },
+  "background": {
+    "scripts": [
+      "js/background.js"
+    ],
+    "persistent": false
+  },
+  "browser_action": {
+    "default_popup": "popup.html",
+    "default_title": "__MSG_extName__",
+    "default_icon": {
+      "19": "assets/images/app.png",
+      "38": "assets/images/app.png"
+    }
+  }
+}

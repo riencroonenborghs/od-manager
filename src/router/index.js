@@ -15,7 +15,7 @@ const routes = [
   },
   // extension specific
   {
-    path: '/index.html',
+    path: '/popup.html',
     redirect: '/downloads/queued'
   },
   {

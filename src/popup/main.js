@@ -7,7 +7,7 @@ import 'vue-material/dist/theme/default-dark.css'
 
 import store from '@/store' // loads VueResource, VueLocalStorage because we need it there
 import router from '@/router'
-import App from '@/App.vue'
+import App from '@/popup/App.vue'
 
 Vue.use(VueFlex)
 Vue.use(MdToolbar)
@@ -44,3 +44,5 @@ new Vue({
     this.$store.dispatch('loadSettings')
   }
 }).$mount('#app')
+
+console.log('here')
