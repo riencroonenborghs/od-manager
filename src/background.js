@@ -1,21 +1,42 @@
 import Vue from 'vue'
 import VueResource from 'vue-resource'
-import { BackgroundDownloadsService } from '@/services/background_downloads_service'
+import { BackgroundService } from '@/services/background_service'
 
 Vue.use(VueResource)
-const service = new BackgroundDownloadsService(Vue.http)
+const service = new BackgroundService(Vue.http)
+const max = 9
 
-// browser.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-//   console.log('Hello from the background')
-// })
+setInterval(() => {
+  chrome.browserAction.setBadgeText({ text: '...' })
 
-let time = 0
-setInterval(function () {
-  chrome.browserAction.setBadgeText({ text: time.toString() })
-  ++time
-  service.all().then(
+  service.allDownloads().then(
     (downloads) => {
-      console.log(downloads)
+      let queued = downloads.filter((download, index, array) => {
+        return download.status === 'queued'
+      })
+      if (queued.length > max) queued = `${max}+`
+      else queued = queued.length
+
+      const message = `${queued}`
+      if (queued.length > 0) {
+        chrome.browserAction.setBadgeBackgroundColor({ color: 'orange' })
+      } else {
+        chrome.browserAction.setBadgeBackgroundColor({ color: 'green' })
+      }
+      chrome.browserAction.setBadgeText({ text: message })
     }
   )
-}, 1000 * 5)
+}, 1000 * 60)
+
+chrome.runtime.onInstalled.addListener(() => {
+  chrome.contextMenus.create({
+    id: 'OD Manager',
+    title: 'Add to queue',
+    contexts: ['link']
+  })
+})
+
+chrome.contextMenus.onClicked.addListener((info, tab) => {
+  var url = info.linkUrl
+  service.createDownload(url).then()
+})

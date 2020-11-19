@@ -44,5 +44,3 @@ new Vue({
     this.$store.dispatch('loadSettings')
   }
 }).$mount('#app')
-
-console.log('here')
