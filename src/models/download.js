@@ -64,15 +64,22 @@ export class Download {
     return new Date(str)
   }
 
+  postProcess () {
+    if (this._url.match(/released\.tv/) !== null) {
+      this._httpUsername = 'released'
+      this._httpPassword = 'released'
+    }
+  }
+
   get asJSON () {
     const data = { url: this.url }
-    if (this.httpUsername) { data.httpUsername = this.httpUsername }
-    if (this.httpPassword) { data.httpPassword = this.httpPassword }
-    if (this.audioOnly) { data.audioOnly = this.audioOnly }
-    if (this.audioFormat) { data.audioFormat = this.audioFormat }
-    if (this.downloadSubs) { data.downloadSubs = this.downloadSubs }
-    if (this.srtSubs) { data.srtSubs = this.srtSubs }
-    if (this.fileFilter) { data.fileFilter = this.fileFilter }
+    if (this.httpUsername) { data.http_username = this.httpUsername }
+    if (this.httpPassword) { data.http_password = this.httpPassword }
+    if (this.audioOnly) { data.audio_only = this.audioOnly }
+    if (this.audioFormat) { data.audio_format = this.audioFormat }
+    if (this.downloadSubs) { data.download_subs = this.downloadSubs }
+    if (this.srtSubs) { data.srt_subs = this.srtSubs }
+    if (this.fileFilter) { data.file_filter = this.fileFilter }
     return JSON.stringify(data)
   }
 }

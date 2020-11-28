@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "version": "6.0",
   "name": "__MSG_extName__",
-  "homepage_url": "http://localhost:8080/",
+  "homepage_url": "https://github.com/riencroonenborghs/od-manager",
   "description": "OD Manager",
   "default_locale": "en",
   "permissions": [

@@ -5,7 +5,7 @@
         <div id="url">
           <md-field>
             <label>URL</label>
-            <md-input v-model="url" type="url" :change="checkUrl()"></md-input>
+            <md-input v-model="url" type="url" :change="checkUrl()" ref="focusable"></md-input>
             <md-icon md-src="/assets/images/youtube.svg" v-if="isYoutube" />
             <md-icon md-src="/assets/images/utorrent.svg" v-if="isTorrent" />
             <md-icon v-if="isLink">link</md-icon>
@@ -119,6 +119,11 @@ export default {
     disableSave: true,
     urlREgExp: new RegExp('http://|https://|ftp://|magnet:')
   }),
+  created () {
+    setTimeout(() => {
+      this.$refs.focusable.$el.focus()
+    }, 500)
+  },
   methods: {
     checkUrl: function () {
       this.showYoutube = this.url.match(/youtu/) != null
@@ -150,6 +155,7 @@ export default {
           fileFilter: this.fileFilter
         }
       )
+      download.postProcess()
       this.$store.state.downloadsService.save(download).then(
         (data) => {
           this.$store.dispatch('successMessage', 'download added')
