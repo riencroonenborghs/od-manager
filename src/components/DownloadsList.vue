@@ -8,7 +8,7 @@
     </md-empty-state>
     <md-list v-if="downloads.length > 0" class="download-list">
       <md-list-item md-expand v-for="download in downloads" :key="download.id">
-        <md-icon>{{icon}}</md-icon>
+        <md-icon class="download-type">{{icon}}</md-icon>
         <span class="md-list-item-text">{{download.url}}</span>
 
         <md-list slot="md-expand">
@@ -110,5 +110,9 @@ export default {
 .md-list.download-list {
   height: calc(100vh - 64px - 48px - 16px);
   overflow: auto;
+}
+
+.download-list .md-icon.download-type {
+  color: #636060;
 }
 </style>
