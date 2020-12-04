@@ -4,47 +4,67 @@
 // We do this because the popup has localStorage settings that this class will use to call the server (host, port, jwt token, ...)
 import Vue from 'vue'
 import VueLocalStorage from 'vue-localstorage'
+import VueApollo from 'vue-apollo'
+import ApolloClient from 'apollo-boost'
+import gql from 'graphql-tag'
+
 Vue.use(VueLocalStorage)
+Vue.use(VueApollo)
 
 export class BackgroundService {
-  constructor (http) {
+  constructor () {
     this.SETTINGS_KEY = 'od-manager-settings'
     this.JWT_KEY = 'od-manager-jwt'
     this.ALL_DOWNLOADS_URL = '/api/v1/downloads'
     this.CREATE_DOWNLOAD_URL = '/api/v1/downloads'
 
-    this.http = http
-    this.settings = this.loadSettings()
     this.jwt = this.loadJWT()
+    const settings = this.loadSettings()
+    const path = '/graphql'
+    const uri = `${settings.protocol}://${settings.hostname}:${settings.port}${path}`
+    this.odApolloClient = new ApolloClient({ uri: uri })
+  }
 
-    this.http.interceptors.push((request) => {
-      request.headers.set('Authorization', this.jwt.token)
+  query (query) {
+    return this.odApolloClient.query({
+      query: gql`${query}`,
+      context: {
+        headers: {
+          Authorization: this.jwt.token
+        }
+      },
+      fetchPolicy: 'no-cache'
+    })
+  }
+
+  mutate (mutation) {
+    return this.odApolloClient.mutate({
+      mutation: gql`${mutation}`,
+      context: {
+        headers: {
+          Authorization: this.jwt.token
+        }
+      },
+      fetchPolicy: 'no-cache'
     })
   }
 
   allDownloads () {
+    const query = 'query { downloads { id status } }'
     return new Promise((resolve, reject) => {
-      this.http.get(this.buildUrl(this.ALL_DOWNLOADS_URL)).then(
-        (data) => {
-          resolve(data.body)
+      this.query(query).then(
+        (success) => {
+          resolve(success.data.downloads)
         }
       )
     })
   }
 
   createDownload (url) {
+    const mutation = `mutation { createDownload ( url: ${url} ) { id } }`
     return new Promise((resolve, reject) => {
-      const data = {
-        download: JSON.stringify({
-          url: url
-        })
-      }
-      this.http.post(
-        this.buildUrl(this.CREATE_DOWNLOAD_URL),
-        data
-      ).then(
-        (data) => {
-          alert(data)
+      this.mutate(mutation).then(
+        (success) => {
           resolve(true)
         }
       )
@@ -65,9 +85,5 @@ export class BackgroundService {
         this.JWT_KEY
       )
     )
-  }
-
-  buildUrl (path) {
-    return `${this.settings.protocol}://${this.settings.hostname}:${this.settings.port}${path}`
   }
 }
