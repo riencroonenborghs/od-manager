@@ -1,37 +1,23 @@
 import store from '@/store'
+import gql from 'graphql-tag'
 
 export class AuthService {
-  constructor (http) {
-    this.http = http
+  constructor () {
     this.LOG_IN_URL = '/users/sign_in'
     this.JWT_KEY = 'od-manager-jwt'
   }
 
   logIn (email, password) {
-    const data = {
-      user: {
-        email: email,
-        password: password
-      }
-    }
+    const client = store.state.odApolloClient
     return new Promise((resolve, reject) => {
-      this.http.post(this._buildUrl(this.LOG_IN_URL), data).then(
+      client.mutate({ mutation: gql`mutation { signInUser(credentials:{ email:"${email}", password:"${password}" } ) { token } }` }).then(
         (success) => {
-          this._store(success.body)
+          this._store(success.data)
           resolve(true)
         },
         (error) => {
-          console.error('ERROR')
-          console.error(error)
-          if (error.body) {
-            const errorMessage = error.body.error
-            store.dispatch('errorMessage', errorMessage)
-            reject(new Error(errorMessage))
-          } else {
-            const errorMessage = 'something\'s gone wrong'
-            store.dispatch('errorMessage', errorMessage)
-            reject(new Error(errorMessage))
-          }
+          store.dispatch('errorMessage', error)
+          reject(new Error(error))
         }
       )
     })
@@ -56,10 +42,7 @@ export class AuthService {
       store.commit('authenticated', false)
       return false
     }
-    if (jwt.expires - new Date() < 0) {
-      store.commit('authenticated', false)
-      return false
-    }
+
     store.commit('authenticated', true)
     return true
   }
@@ -74,14 +57,9 @@ export class AuthService {
     return jwt?.token
   }
 
-  _buildUrl (path) {
-    return `${store.state.settings.protocol}://${store.state.settings.hostname}:${store.state.settings.port}${path}`
-  }
-
   _store (data) {
     const storage = {
-      expires: new Date(data.exp),
-      token: data.token
+      token: data.signInUser.token
     }
     store.state.localStorage.set(this.JWT_KEY, JSON.stringify(storage))
   }

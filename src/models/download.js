@@ -71,15 +71,27 @@ export class Download {
     }
   }
 
-  get asJSON () {
-    const data = { url: this.url }
-    if (this.httpUsername) { data.http_username = this.httpUsername }
-    if (this.httpPassword) { data.http_password = this.httpPassword }
-    if (this.audioOnly) { data.audio_only = this.audioOnly }
-    if (this.audioFormat) { data.audio_format = this.audioFormat }
-    if (this.downloadSubs) { data.download_subs = this.downloadSubs }
-    if (this.srtSubs) { data.srt_subs = this.srtSubs }
-    if (this.fileFilter) { data.file_filter = this.fileFilter }
-    return JSON.stringify(data)
+  get queueMutation () {
+    return `mutation { queueDownload ( id: ${this.id} ) }`
+  }
+
+  get cancelMutation () {
+    return `mutation { cancelDownload ( id: ${this.id} ) }`
+  }
+
+  get removeMutation () {
+    return `mutation { removeDownload ( id: ${this.id} ) }`
+  }
+
+  get createMutation () {
+    const fields = [`url: "${this.url}"`]
+    if (this.httpUsername) fields.push(`httpUsername: "${this.httpUsername}"`)
+    if (this.httpPassword) fields.push(`httpPassword: "${this.httpPassword}"`)
+    if (this.fileFilter) fields.push(`fileFilter: "${this.fileFilter}"`)
+    if (this.audioOnly) fields.push(`audioOnly: ${this.audioOnly}`)
+    if (this.audioFormat) fields.push(`audioFormat: "${this.audioFormat}"`)
+    if (this.downloadSubs) fields.push(`downloadSubs: ${this.downloadSubs}`)
+    if (this.srtSubs) fields.push(`srtSubs: ${this.srtSubs}`)
+    return `mutation { createDownload ( ${fields.join(', ')} ) { id } }`
   }
 }

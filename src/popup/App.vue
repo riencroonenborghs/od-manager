@@ -20,6 +20,9 @@
             <md-button class="md-icon-button" @click="reload()" title="Reload downloads">
               <md-icon>autorenew</md-icon>
             </md-button>
+            <md-button class="md-icon-button" @click="clear()" title="Clear downloads">
+              <md-icon>delete_sweep</md-icon>
+            </md-button>
             <md-button class="md-icon-button" @click="logOut()" title="Log out">
               <md-icon>lock_open</md-icon>
             </md-button>
@@ -73,6 +76,9 @@ export default {
     },
     downloads: function () {
       this.$router.push({ name: 'downloads' })
+    },
+    clear: function () {
+      this.$store.dispatch('clearDownloads')
     }
   }
 }

@@ -1,89 +1,102 @@
-import { ApiService } from '@/services/api_service'
+import { GraphQLService } from '@/services/graphql_service'
 import { Download } from '@/models/download'
+import store from '@/store'
 
-export class DownloadsService extends ApiService {
-  constructor (http) {
-    super(http)
-    this.ALL_URL = '/api/v1/downloads'
-    this.POST_URL = '/api/v1/downloads'
-    this.QUEUE_URL = '/api/v1/downloads/:id/queue'
-    this.CANCEL_URL = '/api/v1/downloads/:id/cancel'
-    this.DELETE_URL = '/api/v1/downloads/:id'
-  }
-
+export class DownloadsService extends GraphQLService {
   all () {
+    const query = 'query { downloads { id url status queuedAt startedAt finishedAt cancelledAt error user { email } } }'
     return new Promise((resolve, reject) => {
-      this.http.get(
-        this.buildUrl(this.ALL_URL)
-      ).then(
-        (data) => {
-          const downloads = data.body.map(
-            (item) =>
+      this.query(query).then(
+        (success) => {
+          const downloads = success.data.downloads.map(
+            (download) =>
               Object.assign(
                 new Download(),
-                this.parseData(item)
+                download
               )
           )
           resolve(downloads)
+        },
+        (error) => {
+          store.dispatch('errorMessage', error)
+          reject(new Error(error))
         }
       )
     })
   }
 
   save (download) {
+    const mutation = download.createMutation
     return new Promise((resolve, reject) => {
-      const data = { download: download.asJSON }
-      this.http.post(
-        this.buildUrl(this.POST_URL),
-        data
-      ).then(
-        (data) => {
+      this.mutate(mutation).then(
+        (success) => {
           resolve(true)
+        },
+        (error) => {
+          store.dispatch('errorMessage', error)
+          reject(new Error(error))
         }
       )
     })
   }
 
   queue (download) {
+    const mutation = download.queueMutation
     return new Promise((resolve, reject) => {
-      const url = this.buildUrl(this.QUEUE_URL, download)
-      this.http.put(url).then(
-        (data) => {
+      this.mutate(mutation).then(
+        (success) => {
           resolve(true)
+        },
+        (error) => {
+          store.dispatch('errorMessage', error)
+          reject(new Error(error))
         }
       )
     })
   }
 
   cancel (download) {
+    const mutation = download.cancelMutation
     return new Promise((resolve, reject) => {
-      const url = this.buildUrl(this.CANCEL_URL, download)
-      this.http.put(url).then(
-        (data) => {
+      this.mutate(mutation).then(
+        (success) => {
           resolve(true)
+        },
+        (error) => {
+          store.dispatch('errorMessage', error)
+          reject(new Error(error))
         }
       )
     })
   }
 
   remove (download) {
+    const mutation = download.removeMutation
     return new Promise((resolve, reject) => {
-      const url = this.buildUrl(this.DELETE_URL, download)
-      this.http.delete(url).then(
-        (data) => {
+      this.mutate(mutation).then(
+        (success) => {
           resolve(true)
+        },
+        (error) => {
+          store.dispatch('errorMessage', error)
+          reject(new Error(error))
         }
       )
     })
   }
 
-  parseData (item) {
-    Object.keys(item).forEach((key) => {
-      const newKey = this.camelize(key.replace('_', ' '))
-      const value = item[key]
-      delete item[key]
-      item[newKey] = value
+  clear () {
+    const mutation = 'mutation { clearDownloads }'
+    return new Promise((resolve, reject) => {
+      this.mutate(mutation).then(
+        (success) => {
+          resolve(true)
+        },
+        (error) => {
+          store.dispatch('errorMessage', error)
+          reject(new Error(error))
+        }
+      )
     })
-    return item
   }
 }

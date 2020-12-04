@@ -2,6 +2,8 @@ import Vue from 'vue'
 import VueResource from 'vue-resource'
 import VueLocalStorage from 'vue-localstorage'
 import Vuex from 'vuex'
+import ApolloClient from 'apollo-boost'
+
 import { AuthService } from '@/services/auth_service'
 import { DownloadsService } from '@/services/downloads_service'
 import { SettingsService } from '@/services/settings_service'
@@ -13,9 +15,10 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    authService: new AuthService(Vue.http),
-    downloadsService: new DownloadsService(Vue.http),
+    authService: new AuthService(),
+    downloadsService: new DownloadsService(),
     settingsService: new SettingsService(),
+    odApolloClient: null,
     settings: {},
     authenticated: false,
     localStorage: Vue.localStorage,
@@ -41,6 +44,9 @@ export default new Vuex.Store({
     },
     settings (state, settings) {
       state.settings = settings
+      const path = '/graphql'
+      const uri = `${settings.protocol}://${settings.hostname}:${settings.port}${path}`
+      state.odApolloClient = new ApolloClient({ uri: uri })
     },
     fetchingDownloads (state, fetchingDownloads) {
       state.fetchingDownloads = fetchingDownloads
@@ -67,7 +73,33 @@ export default new Vuex.Store({
         (data) => {
           context.commit('fetchingDownloads', false)
           context.commit('downloads', data)
+        }//,
+        // (error) => {
+        //   context.commit('fetchingDownloads', false)
+        //   context.commit('downloads', [])
+        // }
+      ).catch(
+        (error) => {
+          context.commit('fetchingDownloads', false)
+          if (error.status === 401) {
+            context.dispatch('errorMessage', 'not authenticated')
+            context.state.authService.logOut()
+            router.push({ name: 'auth' })
+          }
         }
+      )
+    },
+    clearDownloads (context) {
+      context.commit('fetchingDownloads', true)
+      context.state.downloadsService.clear().then(
+        (data) => {
+          context.commit('fetchingDownloads', false)
+          context.dispatch('loadDownloads')
+        }//,
+        // (error) => {
+        //   context.commit('fetchingDownloads', false)
+        //   context.commit('downloads', [])
+        // }
       ).catch(
         (error) => {
           context.commit('fetchingDownloads', false)

@@ -4,6 +4,7 @@ import 'vue-flex/dist/vue-flex.css'
 import { MdToolbar, MdButton, MdIcon, MdField, MdSnackbar, MdTabs, MdList, MdBadge, MdEmptyState, MdDialog, MdMenu, MdCheckbox, MdProgress } from 'vue-material/dist/components'
 import 'vue-material/dist/vue-material.min.css'
 import 'vue-material/dist/theme/default-dark.css'
+import VueApollo from 'vue-apollo'
 
 import store from '@/store' // loads VueResource, VueLocalStorage because we need it there
 import router from '@/router'
@@ -23,18 +24,8 @@ Vue.use(MdDialog)
 Vue.use(MdMenu)
 Vue.use(MdCheckbox)
 Vue.use(MdProgress)
+Vue.use(VueApollo)
 Vue.config.productionTip = false
-
-Vue.http.interceptors.push(function (request) {
-  if (store?.state?.authService?.token) {
-    request.headers.set('Authorization', store.state.authService.token)
-  }
-  // return function (response) {
-  //   if (response.status === 401) {
-  //     store.state.authenticated = false
-  //   }
-  // }
-})
 
 new Vue({
   router,
